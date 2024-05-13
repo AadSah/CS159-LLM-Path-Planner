@@ -66,13 +66,18 @@ def main():
         directory/setting
         number of goals
     '''
-
+    # get the json files
     envs = os.listdir(str(sys.argv[1]))
+    envs = [env for env in envs if env.endswith('.json')]
     n_goals = int(sys.argv[2])
     
     worlds_train = []
     worlds_dev = []
     worlds_test = []
+
+    # create directory if it does not exist
+    if not os.path.exists(str(sys.argv[1]) + '/' + str(n_goals) + '_goals'):
+        os.makedirs(str(sys.argv[1]) + '/' + str(n_goals) + '_goals')
 
     
     for env in envs:
@@ -104,15 +109,15 @@ def main():
 
             print(len(worlds_train), len(worlds_test), len(worlds_dev))
 
-    with open(str(n_goals)+'_train_set' + '.json', 'w') as fo:
+    with open(str(sys.argv[1]) + '/' + str(n_goals) + '_goals' + '/' + str(n_goals)+'_goals_train_set' + '.json', 'w') as fo:
         json_object = json.dumps(worlds_train, indent = 4)
         fo.write(json_object)
         fo.write('\n')
-    with open(str(n_goals)+'dev_set' + '.json', 'w') as fo:
+    with open(str(sys.argv[1]) + '/' + str(n_goals) + '_goals' + '/' + str(n_goals)+'_goals_dev_set' + '.json', 'w') as fo:
         json_object = json.dumps(worlds_dev, indent = 4)
         fo.write(json_object)
         fo.write('\n')
-    with open(str(n_goals)+'_goals_test_seen' + '.json', 'w') as fo:
+    with open(str(sys.argv[1]) + '/' + str(n_goals) + '_goals' + '/' + str(n_goals)+'_goals_test_set_seen' + '.json', 'w') as fo:
         json_object = json.dumps(worlds_test, indent = 4)
         fo.write(json_object)
         fo.write('\n')
@@ -145,7 +150,7 @@ def main():
 
             print(len(worlds_unseen))
 
-    with open(str(n_goals)+'goals_unseen' + '.json', 'w') as fo:
+    with open(str(sys.argv[1]) + '/' + str(n_goals) + '_goals' + '/' + str(n_goals)+'_goals_unseen' + '.json', 'w') as fo:
         json_object = json.dumps(worlds_unseen, indent = 4)
         fo.write(json_object)
         fo.write('\n')
