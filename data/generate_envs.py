@@ -1,6 +1,7 @@
 import random
 import sys
 import json
+import os
 
 def generate_environments(n, min_obstacles, max_obstacles):
     obsts = []
@@ -30,6 +31,9 @@ def main():
     shape = int(sys.argv[1])
     nb_obstacles = int(sys.argv[2])
     target = int(sys.argv[3])
+
+    # create directory envs/grid_size/obs-num if it doesn't exist
+    os.makedirs('envs/' + 'grid-' + str(shape) + '/' + 'obs-' + str(nb_obstacles), exist_ok=True)
 
     envs = []
     while(True):
