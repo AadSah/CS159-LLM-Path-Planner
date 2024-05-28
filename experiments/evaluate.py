@@ -108,6 +108,8 @@ def get_metrics(world_list, generated_list, gt_list, nb_obstacles=None):
     cnt = 0
     path_length = []
     valid = 0
+    x = 6
+    y = 6
     for i in range(len(world_list)):
 
         grid = world_list[i]
@@ -122,11 +124,9 @@ def get_metrics(world_list, generated_list, gt_list, nb_obstacles=None):
         
         print(obsts)
 
-
-
         if(nb_obstacles is None or obsts >= nb_obstacles):
 
-                em += (truth.replace(' ', '') == data[i]['generated'][0].replace(' ', ''))
+                em += (truth.replace(' ', '') == predicted.replace(' ', ''))
 
                 
                 for k in range(len(grid)):
@@ -148,7 +148,7 @@ def get_metrics(world_list, generated_list, gt_list, nb_obstacles=None):
                 print(truth.split(' '))
                 pp = {
                     'n': len(truth.split(' ')[:-1]),
-                    'exact_match':  (truth.replace(' ', '') == data[i]['generated'][0].replace(' ', '')) * 1,
+                    'exact_match':  (truth.replace(' ', '') == predicted.replace(' ', '')) * 1,
                     'success': (test == 1) * 1,
                     'optimal': is_optimal(grid, truth, init, predicted, x, y) * 1,
                     'valid': (distance_from_goal(grid, init, predicted, x, y) != -1 
