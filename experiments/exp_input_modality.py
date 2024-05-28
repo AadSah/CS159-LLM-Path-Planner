@@ -1,6 +1,7 @@
 from read_data import *
 from llm import *
 import time
+from evaluate import get_metrics
 
 text_fewshot_prompt = """
 Provide a sequence of actions to navigate a world to reach a goal similarly to the examples below. (0,0) is located in the upper-left corner and (M, N) lies in the M row and N column.
@@ -96,7 +97,7 @@ def exp_text_input(board_config):
     to collect rewards and avoid obstacles based on the text description of the board.
     """
     prefix = text_fewshot_prompt
-    suffix = "\n Actions:"
+    suffix = "Reminder please only output the actions.\n Actions:"
     user_prompt = prefix + board_text + suffix
     response = query_gpt(sys_prompt, user_prompt)
     return response
@@ -132,36 +133,39 @@ def batch_exp(num_goals = 1, mode = "dev"):
         print(f"experiment world {i}")
         board_config = get_world_config(num_goals, mode, i)
         text_out = exp_text_input(board_config)
-        img_out = exp_image_input(num_goals, mode, i)
-        symbolic_out = exp_symbolic_input(board_config)
-        time.sleep(20)
+        #img_out = exp_image_input(num_goals, mode, i)
+        #symbolic_out = exp_symbolic_input(board_config)
+        time.sleep(15)
 
         text_outs.append(text_out)
-        img_outs.append(img_out)
-        symbolic_outs.append(symbolic_out)
+        #img_outs.append(img_out)
+        #symbolic_outs.append(symbolic_out)
     
     # save
     with open('outputs/exp_input_modality/text_outputs.txt', 'w') as f_text:
         f_text.write("\n".join(text_outs))
-
+    '''
     with open('outputs/exp_input_modality/image_outputs.txt', 'w') as f_text:
         f_text.write("\n".join(img_outs))
 
     with open('outputs/exp_input_modality/symbolic_outputs.txt', 'w') as f_text:
         f_text.write("\n".join(symbolic_outs))
+    '''
     return
 
 
 def batch_eval(modality, num_goals = 1, mode = "dev"):
     world_list = []
     gt_list = []
-    for i in range(30):
+    for i in range(25):
         board_config = get_world_config(num_goals, mode, i)
         world_list.append(board_config["world"])
         gt_list.append(board_config["agent_as_a_point"])
     
     with open(f'outputs/exp_input_modality/{modality}_outputs.txt', 'r') as f:
-        predicted_list = f.readlines(f)
+        predicted_list = f.readlines()
+        # clean input: if starts with "Actions: ", remove
+        cleaned_pred_list = [line[9:] if line.startswith("Actions: ") else line for line in predicted_list]
     metrics, path_lengths = get_metrics(world_list, predicted_list, gt_list)
     
     for metric in metrics:
@@ -175,8 +179,8 @@ def batch_eval(modality, num_goals = 1, mode = "dev"):
     
 
 
-batch_exp()
+#batch_exp()
 #batch_eval("text")
 #batch_eval("image")
-#batch_eval("symbolic")
+batch_eval("symbolic")
     
