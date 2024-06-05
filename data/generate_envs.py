@@ -33,7 +33,8 @@ def main():
     target = int(sys.argv[3])
 
     # create directory envs/grid_size/obs-num if it doesn't exist
-    os.makedirs('envs/' + 'grid-' + str(shape) + '/' + 'obs-' + str(nb_obstacles), exist_ok=True)
+    dir_name = os.path.join('envs/' + 'grid-' + str(shape) + '/' + 'obs-' + str(nb_obstacles))
+    os.makedirs(dir_name, exist_ok=True)
 
     envs = []
     while(True):
@@ -44,7 +45,7 @@ def main():
         envs.append(env)
         if(len(envs) == target):
             break
-    with open('environments' + str(nb_obstacles) + '.json', 'w') as fo:
+    with open(os.path.join(dir_name,'environments' + str(nb_obstacles) + '.json'), 'w') as fo:
         json_object = json.dumps(envs, indent = 4)
         fo.write(json_object)
         fo.write('\n')
